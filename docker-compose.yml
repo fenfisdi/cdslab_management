@@ -1,0 +1,19 @@
+version: "3.5"
+services:
+  management_app:
+    build: .
+    container_name: cdslab_management_app
+    env_file: .env
+    image: fenfisdi/cdslab_management:dev
+    networks:
+      - cdslab_management
+    ports:
+      - 8081:8081
+    volumes:
+      - ./src:/app/src
+
+
+networks:
+  cdslab_management:
+    name: cdslab_management
+    driver: bridge
