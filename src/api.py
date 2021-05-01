@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from src.config import fastApiConfig
+from src.routes import user_routes
 
 app = FastAPI(**fastApiConfig)
 
@@ -20,3 +21,5 @@ app.add_middleware(
     allow_methods=environ.get("ALLOWED_METHODS", "*").split(","),
     allow_headers=environ.get("ALLOWED_HEADERS", "*").split(",")
 )
+
+app.include_router(user_routes)
