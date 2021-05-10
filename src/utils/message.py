@@ -17,3 +17,8 @@ class ValidationMessage:
 @dataclass
 class SecurityMessage:
     invalid_token: str = 'Invalid Token'
+
+
+@dataclass
+class EmailMessage:
+    sent: str = 'Email has been sent'
