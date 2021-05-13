@@ -12,6 +12,18 @@ services:
     volumes:
       - ./src:/app/src
 
+  cdslab_management:
+    container_name: cdslab_management_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: cdsuser
+      MONGO_INITDB_ROOT_PASSWORD: cdspass
+    image: mongo:3-xenial
+    networks:
+      - cdslab_management_network
+    ports:
+      - 27017:27017
+    volumes:
+      - /opt/data/cdslab_management/:/data/db
 
 networks:
   cdslab_management:

@@ -141,6 +141,7 @@ cython_debug/
 # Data
 assets/
 ### VisualStudioCode template
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

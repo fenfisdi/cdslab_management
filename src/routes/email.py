@@ -19,7 +19,14 @@ email_routes = APIRouter(tags=['email'])
 def send_notification_email(
     notification: EmailNotification,
     task: BackgroundTasks
-):
+    ):
+    """
+    Send an email with the content of the data in the notification model
+
+    \f
+    param notification: Data of the email
+    """
+
     output = EmailUseCase.render_notification_email(notification)
     task.add_task(EmailUseCase.send_email, output, notification)
 
@@ -27,18 +34,29 @@ def send_notification_email(
 
 @email_routes.put('/email/template')
 def update_template(template: UpdateTemplate):
+    """
+    Update a template
+
+    \f
+    param template: Template data to update
+    """
     
     template_found = TemplateInterface.find_one(name=template.name)
     if template_found:
-        return UJSONResponse(TemplateMessage.exist, HTTP_400_BAD_REQUEST)
+        template_found.update(**template.dict(exclude_none=True))
+        template_found.save().reload()
+        return UJSONResponse(TemplateMessage.update, HTTP_200_OK)
+    return UJSONResponse(TemplateMessage.not_exist, HTTP_400_BAD_REQUEST)
 
-    template_found.update(**template.dict(exclude_none=True))
-    template_found.save().reload()
-
-    return UJSONResponse(TemplateMessage.update, HTTP_200_OK)
 
 @email_routes.post('/template')
 def create_template(template: UpdateTemplate):
+    """
+    Create a new template
+
+    \f
+    param template: Template data to create
+    """
     template_found = TemplateInterface.find_one(name=template.name)
     
     if template_found:
