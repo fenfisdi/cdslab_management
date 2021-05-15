@@ -6,7 +6,12 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from src.config import fastApiConfig
 from src.db.mongo import MongoEngine
-from src.routes import configuration_routes, email_routes, user_routes
+from src.routes import (
+    configuration_routes,
+    email_routes,
+    root_routes,
+    user_routes
+)
 
 app = FastAPI(**fastApiConfig)
 db = MongoEngine().get_connection()
@@ -27,3 +32,4 @@ app.add_middleware(
 app.include_router(user_routes)
 app.include_router(email_routes)
 app.include_router(configuration_routes)
+app.include_router(root_routes)
