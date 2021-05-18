@@ -22,3 +22,10 @@ class SecurityMessage:
 @dataclass
 class EmailMessage:
     sent: str = 'Email has been sent'
+
+@dataclass
+class TemplateMessage:
+    create: str = 'Template has been created'
+    update: str = 'Template has been updated'
+    exist: str= 'Template exist'
+    not_exist: str = 'Template not found'

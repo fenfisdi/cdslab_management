@@ -30,3 +30,4 @@ typing-extensions==3.7.4.3
 ujson==4.0.2
 urllib3==1.26.4
 uvicorn==0.13.4
+mongoengine==0.23.0
