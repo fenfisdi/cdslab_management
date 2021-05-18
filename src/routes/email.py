@@ -1,13 +1,13 @@
-from src.interfaces.template_interface import TemplateInterface
 from fastapi import APIRouter, BackgroundTasks
-from starlette.status import( 
-    HTTP_200_OK, 
-    HTTP_400_BAD_REQUEST,
-    HTTP_201_CREATED
-    )
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_400_BAD_REQUEST
+)
 
-from src.models.routes import EmailNotification, UpdateTemplate
+from src.interfaces.template_interface import TemplateInterface
 from src.models.db_models.template import Template
+from src.models.routes import EmailNotification, UpdateTemplate
 from src.use_cases.email import EmailUseCase
 from src.utils.message import EmailMessage, TemplateMessage
 from src.utils.response import UJSONResponse
@@ -19,7 +19,7 @@ email_routes = APIRouter(tags=['email'])
 def send_notification_email(
     notification: EmailNotification,
     task: BackgroundTasks
-    ):
+):
     """
     Send an email with the content of the data in the notification model
 
@@ -31,6 +31,7 @@ def send_notification_email(
     task.add_task(EmailUseCase.send_email, output, notification)
 
     return UJSONResponse(EmailMessage.sent, HTTP_200_OK)
+
 
 @email_routes.put('/email/template')
 def update_template(template: UpdateTemplate):
@@ -46,10 +47,11 @@ def update_template(template: UpdateTemplate):
         template_found.update(**template.dict(exclude_none=True))
         template_found.save().reload()
         return UJSONResponse(TemplateMessage.update, HTTP_200_OK)
+
     return UJSONResponse(TemplateMessage.not_exist, HTTP_400_BAD_REQUEST)
 
 
-@email_routes.post('/template')
+@email_routes.post('/email/template')
 def create_template(template: UpdateTemplate):
     """
     Create a new template
@@ -70,4 +72,5 @@ def create_template(template: UpdateTemplate):
         return UJSONResponse(str(error), HTTP_400_BAD_REQUEST)
     return UJSONResponse(
         TemplateMessage.create, 
-        HTTP_201_CREATED)
+        HTTP_201_CREATED
+    )

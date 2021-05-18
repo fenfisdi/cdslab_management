@@ -5,8 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from src.config import fastApiConfig
-from src.routes import user_routes, email_routes
 from src.db.mongo import MongoEngine
+from src.routes import email_routes, user_routes
 
 app = FastAPI(**fastApiConfig)
 db = MongoEngine().get_connection()

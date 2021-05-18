@@ -6,22 +6,20 @@ class UserMessage:
     disabled: str = 'User has been disabled'
     enabled: str = 'User has been enabled'
     invalid_role: str = 'User invalid role'
-
-
-@dataclass
-class ValidationMessage:
-    invalid_user: str = ''
-    invalid_token: str = ''
+    role_updated: str = 'User role has been updated'
+    found: str = 'User Found'
 
 
 @dataclass
 class SecurityMessage:
+    without_privileges: str = 'User without privileges'
     invalid_token: str = 'Invalid Token'
 
 
 @dataclass
 class EmailMessage:
     sent: str = 'Email has been sent'
+
 
 @dataclass
 class TemplateMessage:
