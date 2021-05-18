@@ -4,11 +4,11 @@ from os import environ
 from smtplib import SMTP
 from string import Template
 
-from src.models.routes import EmailNotification
 from src.interfaces.template_interface import TemplateInterface
+from src.models.routes import EmailNotification
+
 
 class EmailUseCase:
-
 
     @classmethod
     def render_notification_email(cls, notification: EmailNotification) -> str:
@@ -17,10 +17,12 @@ class EmailUseCase:
 
         :param notification:
         """
-        template_bd = TemplateInterface.find_one(name=notification.template).content
+        template_bd = TemplateInterface.find_one(
+            name=notification.template
+        ).content
         content = Template(template_bd)
         return content.substitute(message=notification.message)
-       
+
     @classmethod
     def send_email(cls, email: str, notification: EmailNotification):
         smtp_host = environ.get('SMTP_HOST')

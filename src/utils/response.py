@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional, Union
 
 from fastapi.exceptions import HTTPException as FastApiException
 from fastapi.responses import UJSONResponse as FastAPIResponse
@@ -6,8 +6,11 @@ from requests.models import Response
 
 
 class UJSONResponse(FastAPIResponse):
-    def __init__(self, message: str, status_code: int,
-                 data: Optional[dict] = None):
+    def __init__(
+            self,
+            message: str,
+            status_code: int,
+            data: Optional[Union[dict, List[dict]]] = None):
         response = dict(
             message=message,
             status_code=status_code,
