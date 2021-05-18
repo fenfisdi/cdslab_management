@@ -3,8 +3,8 @@ from starlette.status import HTTP_200_OK
 
 from src.models.general import UserRoles
 from src.services import UserAPI
+from src.use_cases import CredentialUseCase
 from src.use_cases.role import ValidateUserRoles
-from src.use_cases.security import SecurityUseCase
 from src.utils.message import UserMessage
 from src.utils.response import UJSONResponse
 
@@ -12,9 +12,10 @@ user_routes = APIRouter(tags=['User'])
 
 
 @user_routes.get('/user')
-def list_users(name: str):
+def list_users(name: str, admin=Depends(CredentialUseCase.get_manager)):
     """
 
+    :param admin:
     :param name:
     """
     response, is_invalid = UserAPI.list_user(name=name)
@@ -42,9 +43,14 @@ def list_users(name: str):
 
 
 @user_routes.post('/user/{email}/role')
-def update_user_role(email: str, role: UserRoles):
+def update_user_role(
+    email: str,
+    role: UserRoles,
+    admin=Depends(CredentialUseCase.get_manager)
+):
     """
 
+    :param admin:
     :param email:
     :param role:
     """
@@ -60,7 +66,7 @@ def update_user_role(email: str, role: UserRoles):
 
 
 @user_routes.post('/user/{email}/disable')
-def disable_user(email: str, admin=Depends(SecurityUseCase.validate)):
+def disable_user(email: str, admin=Depends(CredentialUseCase.get_manager)):
     response, is_invalid = ValidateUserRoles.handle(email, admin)
     if is_invalid:
         return response
@@ -73,7 +79,7 @@ def disable_user(email: str, admin=Depends(SecurityUseCase.validate)):
 
 
 @user_routes.post('/user/{email}/enable')
-def enable_user(email: str, admin=Depends(SecurityUseCase.validate)):
+def enable_user(email: str, admin=Depends(CredentialUseCase.get_manager)):
     response, is_invalid = ValidateUserRoles.handle(
         email,
         admin,

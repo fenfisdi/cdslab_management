@@ -11,13 +11,8 @@ class UserMessage:
 
 
 @dataclass
-class ValidationMessage:
-    invalid_user: str = ''
-    invalid_token: str = ''
-
-
-@dataclass
 class SecurityMessage:
+    without_privileges: str = 'User without privileges'
     invalid_token: str = 'Invalid Token'
 
 

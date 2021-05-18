@@ -13,7 +13,7 @@ class SecurityUseCase:
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
     @classmethod
-    def validate(cls, token: str = Depends(oauth2_scheme)):
+    def get_current_user(cls, token: str = Depends(oauth2_scheme)):
         token_data = cls._validate_token(token)
         email = token_data.get('email')
         response, is_invalid = UserAPI.find_user(email)
@@ -36,3 +36,26 @@ class SecurityUseCase:
             return data
         except JWTError as error:
             raise HTTPException(401, str(error))
+
+
+class CredentialUseCase:
+
+    @classmethod
+    def get_admin(
+        cls,
+        user: dict = Depends(SecurityUseCase.get_current_user)
+    ) -> dict:
+        role = user.get('role')
+        if role != 'admin':
+            raise HTTPException(401, SecurityMessage.without_privileges)
+        return user
+
+    @classmethod
+    def get_manager(
+        cls,
+        user: dict = Depends(SecurityUseCase.get_current_user)
+    ) -> dict:
+        role = user.get('role')
+        if role not in ['admin', 'root']:
+            raise HTTPException(401, SecurityMessage.without_privileges)
+        return user
