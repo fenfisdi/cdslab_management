@@ -7,10 +7,11 @@ from requests.models import Response
 
 class UJSONResponse(FastAPIResponse):
     def __init__(
-            self,
-            message: str,
-            status_code: int,
-            data: Optional[Union[dict, List[dict]]] = None):
+        self,
+        message: str,
+        status_code: int,
+        data: Optional[Union[dict, List[dict]]] = None
+    ):
         response = dict(
             message=message,
             status_code=status_code,
