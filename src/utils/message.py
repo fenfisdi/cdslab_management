@@ -6,6 +6,8 @@ class UserMessage:
     disabled: str = 'User has been disabled'
     enabled: str = 'User has been enabled'
     invalid_role: str = 'User invalid role'
+    role_updated: str = 'User role has been updated'
+    found: str = 'User Found'
 
 
 @dataclass
@@ -22,6 +24,7 @@ class SecurityMessage:
 @dataclass
 class EmailMessage:
     sent: str = 'Email has been sent'
+
 
 @dataclass
 class TemplateMessage:

@@ -19,10 +19,10 @@ class APIService:
         return "".join([self.api.url, endpoint])
 
     def post(
-            self,
-            endpoint: str,
-            data: dict = None,
-            parameters: dict = None
+        self,
+        endpoint: str,
+        data: dict = None,
+        parameters: dict = None
     ) -> Response:
         request = Request(
             url=self.__url(endpoint),
@@ -30,6 +30,20 @@ class APIService:
             params=parameters,
             json=data
 
+        ).prepare()
+        return self.session.send(request)
+
+    def put(
+        self,
+        endpoint: str,
+        data: dict = None,
+        parameters: dict = None
+    ) -> Response:
+        request = Request(
+            url=self.__url(endpoint),
+            method='PUT',
+            params=parameters,
+            json=data
         ).prepare()
         return self.session.send(request)
 

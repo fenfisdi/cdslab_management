@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 
 from src.services import UserAPI
 from src.utils.message import SecurityMessage
@@ -35,4 +35,4 @@ class SecurityUseCase:
                 raise HTTPException(401, SecurityMessage.invalid_token)
             return data
         except JWTError as error:
-            raise HTTPException(401, error)
+            raise HTTPException(401, str(error))
