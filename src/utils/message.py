@@ -27,3 +27,10 @@ class TemplateMessage:
     update: str = 'Template has been updated'
     exist: str= 'Template exist'
     not_exist: str = 'Template not found'
+
+
+@dataclass
+class ConfigurationMessage:
+    found: str = 'Configuration found'
+    update: str = 'Configuration updated'
+    not_found: str = 'Configuration not found'
