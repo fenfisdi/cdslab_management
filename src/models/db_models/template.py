@@ -4,6 +4,6 @@ from .base import BaseDocument
 
 
 class Template(BaseDocument):
-    name = StringField()
-    content = StringField()
+    name = StringField(default="Default")
+    content = StringField(default="<html></html>")
     is_enabled: BooleanField(default=True)

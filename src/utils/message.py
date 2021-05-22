@@ -25,7 +25,7 @@ class EmailMessage:
 class TemplateMessage:
     create: str = 'Template has been created'
     update: str = 'Template has been updated'
-    exist: str= 'Template exist'
+    found: str = 'Template found'
     not_exist: str = 'Template not found'
 
 

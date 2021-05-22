@@ -1,7 +1,6 @@
 from fastapi import APIRouter, BackgroundTasks
 from starlette.status import (
     HTTP_200_OK,
-    HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST
 )
 
@@ -9,6 +8,7 @@ from src.interfaces.template_interface import TemplateInterface
 from src.models.db_models.template import Template
 from src.models.routes import EmailNotification, UpdateTemplate
 from src.use_cases.email import EmailUseCase
+from src.utils.encoder import BsonObject
 from src.utils.message import EmailMessage, TemplateMessage
 from src.utils.response import UJSONResponse
 
@@ -41,36 +41,32 @@ def update_template(template: UpdateTemplate):
     \f
     param template: Template data to update
     """
-    
+
     template_found = TemplateInterface.find_one(name=template.name)
     if template_found:
         template_found.update(**template.dict(exclude_none=True))
-        template_found.save().reload()
+        template_found.reload()
         return UJSONResponse(TemplateMessage.update, HTTP_200_OK)
 
     return UJSONResponse(TemplateMessage.not_exist, HTTP_400_BAD_REQUEST)
 
 
-@email_routes.post('/email/template')
-def create_template(template: UpdateTemplate):
+@email_routes.get('/email/template')
+def create_template():
     """
-    Create a new template
+    Find and return default email template
 
-    \f
-    param template: Template data to create
     """
-    template_found = TemplateInterface.find_one(name=template.name)
-    
-    if template_found:
-        return UJSONResponse(TemplateMessage.exist, HTTP_400_BAD_REQUEST)
-    
-    new_template = Template(**template.dict())
+    template = TemplateInterface.find_one()
+    if not template:
+        template = Template()
+        try:
+            template.save()
+        except Exception as error:
+            return UJSONResponse(str(error), HTTP_400_BAD_REQUEST)
 
-    try:
-        new_template.save()
-    except Exception as error:
-        return UJSONResponse(str(error), HTTP_400_BAD_REQUEST)
     return UJSONResponse(
-        TemplateMessage.create, 
-        HTTP_201_CREATED
+        TemplateMessage.found,
+        HTTP_200_OK,
+        BsonObject.dict(template)
     )
