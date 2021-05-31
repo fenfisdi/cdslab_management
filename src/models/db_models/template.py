@@ -1,9 +1,9 @@
-from mongoengine import (
-    Document, 
-    StringField, 
-    BooleanField)
+from mongoengine import (BooleanField, StringField)
 
-class Template(Document):
-    name = StringField()
-    content = StringField()
+from .base import BaseDocument
+
+
+class Template(BaseDocument):
+    name = StringField(default="Default")
+    content = StringField(default="<html></html>")
     is_enabled: BooleanField(default=True)
