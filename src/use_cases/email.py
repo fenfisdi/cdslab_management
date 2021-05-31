@@ -2,7 +2,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from os import environ
 from smtplib import SMTP
-from string import Template
+
+from jinja2 import Template
 
 from src.interfaces.template_interface import TemplateInterface
 from src.models.routes import EmailNotification
@@ -17,16 +18,20 @@ class EmailUseCase:
 
         :param notification:
         """
-        template_bd = TemplateInterface.find_one(
-            name=notification.template
-        ).content
+        template_bd = TemplateInterface.find_one().content
+        template_bd = "<html><body><p>{{ message }}</p></body></html>"
+
         content = Template(template_bd)
-        return content.substitute(message=notification.message)
+        data = dict(
+            message=notification.message
+        )
+        result = content.render(data)
+        return result
 
     @classmethod
     def send_email(cls, email: str, notification: EmailNotification):
-        smtp_host = environ.get('SMTP_HOST')
-        smtp_port = environ.get('SMTP_PORT')
+        smtp_host = environ.get('SMTP_HOST', 'localhost')
+        smtp_port = environ.get('SMTP_PORT', 25)
         smtp_sender = environ.get('SMTP_SENDER')
 
         message = MIMEMultipart("alternative")
@@ -34,9 +39,10 @@ class EmailUseCase:
         message["Subject"] = notification.subject
         message["From"] = smtp_sender
         message["To"] = notification.email
+        message.attach(attach)
 
         with SMTP(smtp_host, smtp_port) as server:
-            message.attach(attach)
+
             server.sendmail(
                 smtp_sender,
                 notification.email,

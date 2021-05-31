@@ -42,17 +42,23 @@ def update_template(template: UpdateTemplate):
     param template: Template data to update
     """
 
-    template_found = TemplateInterface.find_one(name=template.name)
-    if template_found:
+    template_found = TemplateInterface.find_one()
+    if not template_found:
+        return UJSONResponse(TemplateMessage.not_exist, HTTP_400_BAD_REQUEST)
+    try:
         template_found.update(**template.dict(exclude_none=True))
+    finally:
         template_found.reload()
-        return UJSONResponse(TemplateMessage.update, HTTP_200_OK)
 
-    return UJSONResponse(TemplateMessage.not_exist, HTTP_400_BAD_REQUEST)
+    return UJSONResponse(
+        TemplateMessage.update,
+        HTTP_200_OK,
+        BsonObject.dict(template_found)
+    )
 
 
 @email_routes.get('/email/template')
-def create_template():
+def find_template():
     """
     Find and return default email template
 
