@@ -46,7 +46,7 @@ class CredentialUseCase:
         user: dict = Depends(SecurityUseCase.get_current_user)
     ) -> dict:
         role = user.get('role')
-        if role == 'root':
+        if role != 'root':
             raise HTTPException(401, SecurityMessage.without_privileges)
         return user
 
@@ -56,6 +56,16 @@ class CredentialUseCase:
         user: dict = Depends(SecurityUseCase.get_current_user)
     ) -> dict:
         role = user.get('role')
-        if role == 'admin':
+        if role != 'admin':
+            raise HTTPException(401, SecurityMessage.without_privileges)
+        return user
+
+    @classmethod
+    def get_manager(
+        cls,
+        user: dict = Depends(SecurityUseCase.get_current_user)
+    ) -> dict:
+        role = user.get('role')
+        if role not in ['admin', 'root']:
             raise HTTPException(401, SecurityMessage.without_privileges)
         return user
