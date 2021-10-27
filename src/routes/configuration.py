@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from starlette.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST
@@ -7,6 +7,7 @@ from starlette.status import (
 from src.interfaces import ConfigurationInterface
 from src.models.db_models import Configuration
 from src.models.routes import UpdateConfiguration
+from src.use_cases import CredentialUseCase
 from src.utils.encoder import BsonObject
 from src.utils.message import ConfigurationMessage
 from src.utils.response import UJSONResponse
@@ -15,7 +16,9 @@ configuration_routes = APIRouter(tags=['config'])
 
 
 @configuration_routes.get('/configuration')
-def find_configuration():
+def find_configuration(
+    admin=Depends(CredentialUseCase.get_manager)
+):
     configuration = ConfigurationInterface.find_one()
     if not configuration:
         configuration = Configuration(
@@ -36,7 +39,10 @@ def find_configuration():
 
 
 @configuration_routes.put('/configuration')
-def find_configuration(configuration: UpdateConfiguration):
+def find_configuration(
+    configuration: UpdateConfiguration,
+    admin=Depends(CredentialUseCase.get_manager)
+):
     configuration_found = ConfigurationInterface.find_one()
     if not configuration_found:
         return UJSONResponse(

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 from starlette.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST
@@ -7,6 +7,7 @@ from starlette.status import (
 from src.interfaces.template_interface import TemplateInterface
 from src.models.db_models.template import Template
 from src.models.routes import EmailNotification, UpdateTemplate
+from src.use_cases import CredentialUseCase
 from src.use_cases.email import EmailUseCase
 from src.utils.encoder import BsonObject
 from src.utils.message import EmailMessage, TemplateMessage
@@ -34,7 +35,10 @@ def send_notification_email(
 
 
 @email_routes.put('/email/template')
-def update_template(template: UpdateTemplate):
+def update_template(
+    template: UpdateTemplate,
+    admin=Depends(CredentialUseCase.get_root)
+):
     """
     Update a template
 
@@ -58,7 +62,9 @@ def update_template(template: UpdateTemplate):
 
 
 @email_routes.get('/email/template')
-def find_template():
+def find_template(
+    admin=Depends(CredentialUseCase.get_root)
+):
     """
     Find and return default email template
 

@@ -16,7 +16,7 @@ user_routes = APIRouter(tags=['User'])
 @user_routes.get('/user')
 def list_users(
     name: Optional[str] = None,
-    admin=Depends(CredentialUseCase.get_admin)
+    admin=Depends(CredentialUseCase.get_manager)
 ):
     """
 
@@ -26,31 +26,47 @@ def list_users(
     response, is_invalid = UserAPI.list_user(name=name)
     if is_invalid:
         return response
-    users = response.get('data')
+    users_enabled = response.get('data')
+
+    response, is_invalid = UserAPI.list_user(name=name, is_enabled=False)
+    if is_invalid:
+        return response
+    users_disabled = response.get('data')
 
     response, is_invalid = UserAPI.list_user(name=name, role=UserRoles.ADMIN)
     if is_invalid:
         return response
-    admins = response.get('data')
+    admins_enabled = response.get('data')
 
-    users = [
+    response, is_invalid = UserAPI.list_user(
+        name=name,
+        role=UserRoles.ADMIN,
+        is_enabled=False
+    )
+    if is_invalid:
+        return response
+    admins_disabled = response.get('data')
+
+    users = users_enabled + users_disabled + admins_enabled + admins_disabled
+
+    result = [
         {
             'name': user.get('name'),
             'last_name': user.get('last_name'),
             'email': user.get('email'),
             'role': user.get('role'),
             'is_enabled': user.get('is_enabled')
-        } for user in (users + admins)
+        } for user in users
         if user.get('email') != admin.get('email')
     ]
 
-    return UJSONResponse(UserMessage.found, HTTP_200_OK, users)
+    return UJSONResponse(UserMessage.found, HTTP_200_OK, result)
 
 
 @user_routes.post('/user/role')
 def update_user_role(
     users: List[UpdateUserRole],
-    admin=Depends(CredentialUseCase.get_admin)
+    admin=Depends(CredentialUseCase.get_manager)
 ):
     """
 
@@ -67,7 +83,7 @@ def update_user_role(
 @user_routes.post('/user/enable')
 def update_user_enabled(
     users: List[UpdateUserEnable],
-    admin=Depends(CredentialUseCase.get_admin)
+    admin=Depends(CredentialUseCase.get_root)
 ):
     """
 

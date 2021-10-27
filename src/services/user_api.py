@@ -37,16 +37,19 @@ class UserAPI:
     def list_user(
         cls,
         name: Optional[str] = None,
+        is_enabled: bool = True,
         role: UserRoles = UserRoles.USER
     ):
         """
 
         :param name:
+        :param is_enabled:
         :param role:
         """
         parameters = {
             'role': role.value,
             'is_valid': True,
+            'is_enabled': is_enabled,
         }
         if name:
             parameters['name'] = name
